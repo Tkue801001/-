@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>法規檢視器</title>
+    <style>
+        .entry {
+            margin: 10px 0;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .entry:hover {
+            background-color: #f0f0f0;
+        }
+        #hierarchy-display {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="meta-data">
+        {{ content.meta_data | safe }}
+    </div>
+    
+    <div id="entries">
+        {% for entry in content.entries %}
+            <div class="entry" data-entry-id="{{ entry._id }}" onclick="showHierarchy(this)">
+                {{ entry.content | safe }}
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div id="hierarchy-display"></div>
+
+    <script>
+        function showHierarchy(element) {
+            const entryId = element.dataset.entryId;
+            fetch(`/api/hierarchy/${entryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const display = document.getElementById('hierarchy-display');
+                    display.textContent = data.hierarchy;
+                    display.style.display = 'block';
+                });
+        }
+    </script>
+</body>
+</html> 
